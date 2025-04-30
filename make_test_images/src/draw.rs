@@ -1,0 +1,139 @@
+use std::fs::File;
+
+use gf_metadata::{FontProto, GoogleFonts};
+use harfruzz::{GlyphBuffer, ShaperFont};
+use kurbo::{Affine, BezPath, Point, Vec2};
+use memmap::{Mmap, MmapOptions};
+use skrifa::{
+    FontRef, MetadataProvider,
+    outline::{DrawSettings, OutlinePen},
+    prelude::{LocationRef, Size},
+};
+
+pub fn draw_sample_svg(gf: &GoogleFonts, font: &FontProto) -> BezPath {
+    // Figure out what string to draw
+    // TODO: a meaningful selection of sample text
+    let sample_text = "Hamburgevons";
+
+    // Load the font and shape the sample string
+    let Some(font_file) = gf.find_font_binary(font) else {
+        panic!("Unable to locate {font:?}");
+    };
+
+    let fd = File::open(&font_file).expect("To read fonts!");
+    let mmap: Mmap = unsafe { MmapOptions::new().map(&fd).expect("To map files!") };
+    let font_ref = FontRef::new(&mmap).expect("For font files to be font files!");
+
+    // Draw an SVG of it
+    let outlines = font_ref.outline_glyphs();
+    let mut pen = PathPen::default();
+
+    let glyphs = shape(&sample_text, &font_ref);
+
+    for (glyph_info, pos) in glyphs.glyph_infos().iter().zip(glyphs.glyph_positions()) {
+        let glyph = outlines
+            .get(glyph_info.glyph_id.into())
+            .expect("Glyphs to exist!");
+        glyph
+            .draw(
+                DrawSettings::unhinted(Size::unscaled(), LocationRef::default()),
+                &mut pen,
+            )
+            .expect("To draw!");
+
+        pen.transform = pen.transform.then_translate(Vec2 {
+            x: pos.x_advance.into(),
+            y: pos.y_advance.into(),
+        });
+    }
+
+    pen.path
+}
+
+// Simplified version of <https://github.com/harfbuzz/harfruzz/blob/006472176ab87e3a84e799e74e0ac19fbe943dd7/tests/shaping/main.rs#L107>
+// Will have to update if/when that API updates
+fn shape(text: &str, font: &FontRef) -> GlyphBuffer {
+    let shaper_font = ShaperFont::new(&font);
+    let face = shaper_font.shaper(&font, &[]);
+
+    let mut buffer = harfruzz::UnicodeBuffer::new();
+    buffer.push_str(text);
+
+    harfruzz::shape(&face, &[], buffer)
+}
+
+struct PathPen {
+    transform: Affine,
+    path: BezPath,
+}
+
+impl Default for PathPen {
+    fn default() -> Self {
+        // flip y because fonts are y-up and svg is y-down
+        Self {
+            transform: Affine::FLIP_Y,
+            path: Default::default(),
+        }
+    }
+}
+
+impl OutlinePen for PathPen {
+    fn move_to(&mut self, x: f32, y: f32) {
+        self.path.move_to(
+            self.transform
+                * Point {
+                    x: x.into(),
+                    y: y.into(),
+                },
+        );
+    }
+
+    fn line_to(&mut self, x: f32, y: f32) {
+        self.path.line_to(
+            self.transform
+                * Point {
+                    x: x.into(),
+                    y: y.into(),
+                },
+        );
+    }
+
+    fn quad_to(&mut self, cx0: f32, cy0: f32, x: f32, y: f32) {
+        self.path.quad_to(
+            self.transform
+                * Point {
+                    x: cx0.into(),
+                    y: cy0.into(),
+                },
+            self.transform
+                * Point {
+                    x: x.into(),
+                    y: y.into(),
+                },
+        );
+    }
+
+    fn curve_to(&mut self, cx0: f32, cy0: f32, cx1: f32, cy1: f32, x: f32, y: f32) {
+        self.path.curve_to(
+            self.transform
+                * Point {
+                    x: cx0.into(),
+                    y: cy0.into(),
+                },
+            self.transform
+                * Point {
+                    x: cx1.into(),
+                    y: cy1.into(),
+                },
+            self.transform
+                * Point {
+                    x: x.into(),
+                    y: y.into(),
+                },
+        );
+    }
+
+    fn close(&mut self) {
+        self.path.close_path();
+    }
+}

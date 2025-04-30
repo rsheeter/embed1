@@ -5,6 +5,5 @@ edition = "2024"
 
 [dependencies]
 gf-metadata = { path = "../gf-metadata" }
-home = "0.5.11"
-walkdir = "2.5.0"
+home.workspace = true
 protobuf.workspace = true

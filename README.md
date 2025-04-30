@@ -1,9 +1,26 @@
 # embed1
 
+## Setup
+
 ```shell
-# To confirm you can read your local metadata
+# We assume things about directories because we're lazy
+$ mkdir ~/oss
+$ cd ~/oss
+$ git clone git@github.com:google/fonts.git
+$ git clone git@github.com:rsheeter/embed1.git
+```
+
+## Confirm we're online
+
+```shell
 $ cargo run -p read-gf-metadata
 ...noise...
 Read 1911/1911 METADATA.pb files successfully
 Read 1682/1682 language files successfully
+```
+
+## Make some test images
+
+```shell
+$ cargo run -p make_test_images
 ```

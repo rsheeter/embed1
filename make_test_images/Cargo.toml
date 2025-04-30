@@ -4,6 +4,9 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+home.workspace = true
 harfruzz = { git = "https://github.com/harfbuzz/harfruzz" }
 gf-metadata = { path = "../gf-metadata" }
-read-gf-metadata = { path = "../read-gf-metadata" }
+kurbo = "0.11.2"
+skrifa = "0.30.0"
+memmap = "0.7.0"
