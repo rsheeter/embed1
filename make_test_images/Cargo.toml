@@ -1,0 +1,9 @@
+[package]
+name = "make_test_images"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+harfruzz = { git = "https://github.com/harfbuzz/harfruzz" }
+gf-metadata = { path = "../gf-metadata" }
+read-gf-metadata = { path = "../read-gf-metadata" }
