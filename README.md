@@ -28,4 +28,4 @@ $ ls -1 /tmp/*.ttf.png | wc -l
 1905
 ```
 
-~[Lobster render sample](Lobster-Regular.ttf.png)
+![Lobster render sample](Lobster-Regular.ttf.png)
