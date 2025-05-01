@@ -10,7 +10,10 @@ use skrifa::{
     prelude::{LocationRef, Size},
 };
 
-pub fn draw_sample_svg(gf: &GoogleFonts, font: &FontProto) -> BezPath {
+/// Draws sample text in the specified font.
+///
+/// Baseline is at y=0.
+pub fn path_for_sampletext(gf: &GoogleFonts, font: &FontProto) -> BezPath {
     // Figure out what string to draw
     // TODO: a meaningful selection of sample text
     let sample_text = "Hamburgevons";

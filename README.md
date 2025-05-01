@@ -23,4 +23,9 @@ Read 1682/1682 language files successfully
 
 ```shell
 $ cargo run -p make_test_images
+# Should write lots of /tmp/family.ext.png
+$ ls -1 /tmp/*.ttf.png | wc -l
+1905
 ```
+
+~[Lobster render sample](Lobster-Regular.ttf.png)
