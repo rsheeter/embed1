@@ -24,8 +24,13 @@ Read 1682/1682 language files successfully
 ```shell
 $ cargo run -p make_test_images
 # Should write lots of /tmp/family.ext.png
-$ ls -1 /tmp/*.ttf.png | wc -l
+$ ls -1 /tmp/test_png/*.png | wc -l
 1905
 ```
 
 ![Lobster render sample](Lobster-Regular.ttf.png)
+
+## References
+
+* https://openai.com/index/clip/
+* https://stackoverflow.blog/2023/11/09/an-intuitive-introduction-to-text-embeddings/

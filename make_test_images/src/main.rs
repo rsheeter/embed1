@@ -1,11 +1,35 @@
-use std::{fs, path::PathBuf};
+use std::{
+    fs,
+    path::{Path, PathBuf},
+};
 
+use clap::Parser;
 use color::parse_color;
 use gf_metadata::{FontProto, GoogleFonts, exemplar};
 use home::home_dir;
 use kurbo::{Affine, BezPath, Rect, Shape, Vec2};
 use make_test_images::{draw::path_for_sampletext, draw_png};
 use tiny_skia::Pixmap;
+
+#[derive(Parser, Debug)]
+#[command(version, about, long_about = None)]
+struct Args {
+    /// Where to save svg files
+    #[arg(short, long, default_value = "/tmp/test_svg")]
+    svg_dir: String,
+
+    /// Where to save svg files
+    #[arg(short, long, default_value = "/tmp/test_png")]
+    png_dir: String,
+
+    /// Text color
+    #[arg(short, long, default_value = "black")]
+    text_color: String,
+
+    /// Backdrop color
+    #[arg(short, long, default_value = "white")]
+    backdrop_color: String,
+}
 
 fn svg(sample: &BezPath, viewbox: Rect) -> String {
     let mut svg = format!(
@@ -22,8 +46,8 @@ fn svg(sample: &BezPath, viewbox: Rect) -> String {
     svg
 }
 
-fn output_file(exemplar: &FontProto, ext: &str) -> PathBuf {
-    let mut out_file = PathBuf::from("/tmp");
+fn output_file(dir: &str, exemplar: &FontProto, ext: &str) -> PathBuf {
+    let mut out_file = PathBuf::from(dir);
     out_file.push(format!("{}{ext}", exemplar.filename()));
     out_file
 }
@@ -33,9 +57,19 @@ fn with_margin(rect: Rect, multiplier: f64) -> Rect {
     rect.inflate(margin, margin)
 }
 
+fn ensure_has_dir(dir: &str) {
+    let p = Path::new(dir);
+    fs::create_dir_all(p).expect("To create output dir");
+}
+
 fn main() {
-    let text_color = parse_color("black").unwrap();
-    let backdrop_color = parse_color("white").unwrap();
+    let args = Args::parse();
+
+    let text_color = parse_color(&args.text_color).unwrap();
+    let backdrop_color = parse_color(&args.backdrop_color).unwrap();
+
+    ensure_has_dir(&args.svg_dir);
+    ensure_has_dir(&args.png_dir);
 
     let mut d = home_dir().expect("Must have a home dir");
     d.push("oss/fonts");
@@ -77,7 +111,7 @@ fn main() {
 
         // Draw an svg
         let svg = svg(&path, sample_bbox);
-        let svg_out = output_file(exemplar, ".svg");
+        let svg_out = output_file(&args.svg_dir, exemplar, ".svg");
         fs::write(&svg_out, svg).expect("To write output files");
         eprintln!("Wrote {svg_out:?}");
 
@@ -105,7 +139,7 @@ fn main() {
         });
         let png =
             draw_png(&mut pixmap, text_color, backdrop_color, scaled_path).expect("To draw png");
-        let png_out = output_file(exemplar, ".png");
+        let png_out = output_file(&args.png_dir, exemplar, ".png");
         fs::write(&png_out, png).expect("To write output files");
         eprintln!("Wrote {png_out:?}");
     }
