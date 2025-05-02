@@ -23,7 +23,7 @@ Read 1682/1682 language files successfully
 
 ```shell
 # Make all the test images
-$ $ cargo build --release -p make_test_images && target/release/make_test_images
+$ cargo build --release -p make_test_images && target/release/make_test_images
 $ ls -1 /tmp/test_png/*.png | wc -l
 1905
 
