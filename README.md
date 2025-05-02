@@ -36,6 +36,7 @@ $ cargo run -p make_test_images -- --family-filter ofl/notosanstc
 ```
 
 ![Lobster render sample](Lobster-Regular.ttf.png)
+![Shippori Mincho render sample](ShipporiMincho-Regular.ttf.png)
 
 ## References
 
