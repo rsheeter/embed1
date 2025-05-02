@@ -22,10 +22,17 @@ Read 1682/1682 language files successfully
 ## Make some test images
 
 ```shell
-$ cargo run -p make_test_images
-# Should write lots of /tmp/family.ext.png
+# Make all the test images
+$ $ cargo build --release -p make_test_images && target/release/make_test_images
 $ ls -1 /tmp/test_png/*.png | wc -l
 1905
+
+# Process just one family
+# jua uses primary_script
+$ cargo run -p make_test_images -- --family-filter ofl/jua
+
+# notosanstc uses primary_language
+$ cargo run -p make_test_images -- --family-filter ofl/notosanstc
 ```
 
 ![Lobster render sample](Lobster-Regular.ttf.png)

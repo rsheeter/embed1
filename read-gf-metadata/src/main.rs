@@ -5,7 +5,7 @@ fn main() {
     let mut d = home_dir().expect("Must have a home dir");
     d.push("oss/fonts");
     //d.push("ofl/robotomono");
-    let gf = GoogleFonts::new(d);
+    let gf = GoogleFonts::new(d, None);
 
     let mut metadata_success = 0;
     let mut metadata_fail = 0;

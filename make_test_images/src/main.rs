@@ -9,6 +9,7 @@ use gf_metadata::{FontProto, GoogleFonts, exemplar};
 use home::home_dir;
 use kurbo::{Affine, BezPath, Rect, Shape, Vec2};
 use make_test_images::{draw::path_for_sampletext, draw_png};
+use regex::Regex;
 use tiny_skia::Pixmap;
 
 #[derive(Parser, Debug)]
@@ -29,6 +30,10 @@ struct Args {
     /// Backdrop color
     #[arg(short, long, default_value = "white")]
     backdrop_color: String,
+
+    /// Family path filter, retain only paths that contain this regex.
+    #[arg(long)]
+    family_filter: Option<String>,
 }
 
 fn svg(sample: &BezPath, viewbox: Rect) -> String {
@@ -67,13 +72,16 @@ fn main() {
 
     let text_color = parse_color(&args.text_color).unwrap();
     let backdrop_color = parse_color(&args.backdrop_color).unwrap();
+    let family_filter = args
+        .family_filter
+        .map(|f| Regex::new(&f).expect("A valid filter regex"));
 
     ensure_has_dir(&args.svg_dir);
     ensure_has_dir(&args.png_dir);
 
     let mut d = home_dir().expect("Must have a home dir");
     d.push("oss/fonts");
-    let gf = GoogleFonts::new(d);
+    let gf = GoogleFonts::new(d, family_filter);
 
     let mut metadatas = Vec::new();
     let mut metadata_fail = 0;

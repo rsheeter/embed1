@@ -15,8 +15,12 @@ use skrifa::{
 /// Baseline is at y=0.
 pub fn path_for_sampletext(gf: &GoogleFonts, font: &FontProto) -> BezPath {
     // Figure out what string to draw
-    // TODO: a meaningful selection of sample text
-    let sample_text = "Hamburgevons";
+    let Some((_, family)) = gf.family(font) else {
+        panic!("No family available for {font:?}?!");
+    };
+
+    let lang = gf.primary_language(family);
+    let sample_text = lang.sample_text.styles();
 
     // Load the font and shape the sample string
     let Some(font_file) = gf.find_font_binary(font) else {
