@@ -1,6 +1,8 @@
 # embed1
 
-## Setup
+## Execution
+
+### Setup
 
 ```shell
 # We assume things about directories because we're lazy
@@ -10,7 +12,7 @@ $ git clone git@github.com:google/fonts.git
 $ git clone git@github.com:rsheeter/embed1.git
 ```
 
-## Confirm we're online
+### Confirm we're online
 
 ```shell
 $ cargo run -p read-gf-metadata
@@ -19,7 +21,7 @@ Read 1911/1911 METADATA.pb files successfully
 Read 1682/1682 language files successfully
 ```
 
-## Make some test images
+### Make images
 
 ```shell
 # Make all the test images
@@ -37,6 +39,12 @@ $ cargo run -p make_test_images -- --family-filter ofl/notosanstc
 
 ![Lobster render sample](Lobster-Regular.ttf.png)
 ![Shippori Mincho render sample](ShipporiMincho-Regular.ttf.png)
+
+### Make embeddings
+
+```shell
+$ cargo build --release -p make_embedding && target/release/make_embedding
+```
 
 ## References
 
