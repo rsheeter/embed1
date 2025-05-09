@@ -46,7 +46,14 @@ $ cargo run -p make_test_images -- --family-filter ofl/notosanstc
 $ cargo build --release -p make_embedding && target/release/make_embedding
 ```
 
+### Query embeddings
+
+```shell
+$ cargo run -p query_embedding -- "Fun serif"
+```
+
 ## References
 
 * https://openai.com/index/clip/
 * https://stackoverflow.blog/2023/11/09/an-intuitive-introduction-to-text-embeddings/
+* https://github.com/StarlightSearch/EmbedAnything/blob/main/examples/clip.py

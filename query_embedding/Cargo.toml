@@ -1,15 +1,13 @@
 [package]
-name = "make_embedding"
+name = "query_embedding"
 version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-protobuf.workspace = true
-home.workspace = true
-gf-metadata = { path = "../gf-metadata" }
 gf-embed = { path = "../gf-embed" }
 embed_anything.workspace = true
+protobuf.workspace = true
 clap.workspace = true
 walkdir.workspace = true
-regex.workspace = true
-itertools = "0.14.0"
+tokio = "1.45.0"
+candle-core = "0.9.1"

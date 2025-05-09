@@ -5,10 +5,10 @@ use embed_anything::embeddings::{
     embed::{EmbedImage, Embedder, VisionEmbedder},
     local::clip::ClipEmbedder,
 };
+use gf_embed::embed_data::EmbedDataProto;
 use gf_metadata::{GoogleFonts, exemplar};
 use home::home_dir;
 use itertools::Itertools;
-use make_embedding::embed_data::EmbedDataProto;
 use protobuf::Message;
 use regex::Regex;
 use walkdir::WalkDir;
@@ -102,12 +102,18 @@ fn main() {
             eprintln!("Missing {image_file:?}");
             continue;
         }
-        let metadata = tags.map(|tags| tags).map(|tags| {
-            tags.iter()
-                .map(|t| (t.tag.to_string(), format!("{}", t.value)))
-                .collect()
-        });
-        match embedder.embed_image(&image_file, metadata) {
+        let mut metadata: HashMap<String, String> = tags
+            .map(|tags| tags)
+            .map(|tags| {
+                tags.iter()
+                    .map(|t| (t.tag.to_string(), format!("{}", t.value)))
+                    .collect()
+            })
+            .unwrap_or_default();
+        // It's helpful to know what family when querying
+
+        metadata.insert("family_name".to_string(), family.name().to_string());
+        match embedder.embed_image(&image_file, Some(metadata)) {
             Ok(data) => {
                 let proto: EmbedDataProto = data.into();
                 let raw = proto.write_to_bytes().expect("To convert proto to bytes");

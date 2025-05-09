@@ -42,3 +42,31 @@ impl From<EmbedData> for EmbedDataProto {
         proto
     }
 }
+
+impl Into<EmbedData> for EmbedDataProto {
+    fn into(mut self) -> EmbedData {
+        let mut result = std::mem::take(&mut self.result);
+        EmbedData {
+            embedding: match result.len() {
+                0 => panic!("This isn't supposed to happen!"),
+                1 => EmbeddingResult::DenseVector(result.pop().unwrap().value),
+                _ => EmbeddingResult::MultiVector(result.into_iter().map(|v| v.value).collect()),
+            },
+            text: if self.has_text() {
+                Some(self.take_text())
+            } else {
+                None
+            },
+            metadata: if !self.metadata.is_empty() {
+                Some(
+                    self.metadata
+                        .into_iter()
+                        .map(|mut m| (m.take_key(), m.take_value()))
+                        .collect(),
+                )
+            } else {
+                None
+            },
+        }
+    }
+}

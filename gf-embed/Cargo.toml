@@ -1,0 +1,8 @@
+[package]
+name = "gf-embed"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+protobuf.workspace = true
+embed_anything.workspace = true
