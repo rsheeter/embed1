@@ -5,7 +5,7 @@ use clap::Parser;
 use embed_anything::{
     embed_query,
     embeddings::{
-        embed::{EmbedData, Embedder, VisionEmbedder},
+        embed::{EmbedData, EmbedImage, Embedder, VisionEmbedder},
         local::clip::ClipEmbedder,
     },
 };
@@ -57,9 +57,18 @@ async fn main() {
 
     // Ref https://github.com/StarlightSearch/EmbedAnything/blob/main/rust/examples/clip.rs
     for query in args.queries.iter() {
-        let query_emb_data = embed_query(&[query.as_str()], &embedder, None)
-            .await
-            .expect("Query to execute");
+        let query_embed_data = if query.ends_with(".png") {
+            let p = Path::new(query);
+            if !p.is_file() {
+                eprintln!("{query} looks like an image file but doesn't exist, skipping");
+                continue;
+            }
+            vec![embedder.embed_image(&p, None).expect("To embed image")]
+        } else {
+            embed_query(&[query.as_str()], &embedder, None)
+                .await
+                .expect("Query to execute")
+        };
 
         // TODO we should save something closer to what we need here in make_embedding
         let n_vectors = embed_datas.len();
@@ -82,14 +91,14 @@ async fn main() {
         .unwrap();
 
         let query_embeddings = Tensor::from_vec(
-            query_emb_data
+            query_embed_data
                 .iter()
                 .map(|embed| embed.embedding.clone())
                 .collect::<Vec<_>>()
                 .into_iter()
                 .flat_map(|x| x.to_dense().unwrap())
                 .collect::<Vec<_>>(),
-            (1, query_emb_data[0].embedding.to_dense().unwrap().len()),
+            (1, query_embed_data[0].embedding.to_dense().unwrap().len()),
             &Device::Cpu,
         )
         .unwrap();
