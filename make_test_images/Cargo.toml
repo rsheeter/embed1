@@ -5,7 +5,7 @@ edition = "2024"
 
 [dependencies]
 home.workspace = true
-harfruzz = { git = "https://github.com/harfbuzz/harfruzz" }
+harfruzz = "0.1.0"
 gf-metadata = { path = "../gf-metadata" }
 kurbo = "0.11.2"
 skrifa = "0.30.0"
