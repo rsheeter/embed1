@@ -1,12 +1,13 @@
 [package]
-name = "make_test_images"
+name = "make_icon_images"
 version = "0.1.0"
 edition = "2024"
 
 [dependencies]
 home.workspace = true
 harfruzz = "0.1.0"
-gf-metadata = { path = "../gf-metadata" }
+sleipnir = {path="../../sleipnir"}
+make_test_images = {path="../make_test_images"}
 kurbo.workspace = true
 skrifa.workspace = true
 memmap = "0.7.0"

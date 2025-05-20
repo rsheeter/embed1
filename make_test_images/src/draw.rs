@@ -5,7 +5,7 @@ use harfruzz::{GlyphBuffer, ShaperFont};
 use kurbo::{Affine, BezPath, Point, Vec2};
 use memmap::{Mmap, MmapOptions};
 use skrifa::{
-    FontRef, MetadataProvider,
+    MetadataProvider,
     outline::{DrawSettings, OutlinePen},
     prelude::{LocationRef, Size},
 };
@@ -29,13 +29,14 @@ pub fn path_for_sampletext(gf: &GoogleFonts, font: &FontProto) -> BezPath {
 
     let fd = File::open(&font_file).expect("To read fonts!");
     let mmap: Mmap = unsafe { MmapOptions::new().map(&fd).expect("To map files!") };
-    let font_ref = FontRef::new(&mmap).expect("For font files to be font files!");
+    let harf_font_ref = harfruzz::FontRef::new(&mmap).expect("For font files to be font files!");
+    let skrifa_font_ref = skrifa::FontRef::new(&mmap).expect("Fonts to be fonts");
 
     // Draw an SVG of it
-    let outlines = font_ref.outline_glyphs();
+    let outlines = skrifa_font_ref.outline_glyphs();
     let mut pen = PathPen::default();
 
-    let glyphs = shape(&sample_text, &font_ref);
+    let glyphs = shape(&sample_text, &harf_font_ref);
 
     for (glyph_info, pos) in glyphs.glyph_infos().iter().zip(glyphs.glyph_positions()) {
         let glyph = outlines
@@ -59,9 +60,9 @@ pub fn path_for_sampletext(gf: &GoogleFonts, font: &FontProto) -> BezPath {
 
 // Simplified version of <https://github.com/harfbuzz/harfruzz/blob/006472176ab87e3a84e799e74e0ac19fbe943dd7/tests/shaping/main.rs#L107>
 // Will have to update if/when that API updates
-fn shape(text: &str, font: &FontRef) -> GlyphBuffer {
-    let shaper_font = ShaperFont::new(&font);
-    let face = shaper_font.shaper(&font, &[]);
+fn shape(text: &str, font: &harfruzz::FontRef) -> GlyphBuffer {
+    let shaper_font = ShaperFont::new(font);
+    let face = shaper_font.shaper(font, &[]);
 
     let mut buffer = harfruzz::UnicodeBuffer::new();
     buffer.push_str(text);
