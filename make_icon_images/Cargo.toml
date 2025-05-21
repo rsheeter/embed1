@@ -6,7 +6,7 @@ edition = "2024"
 [dependencies]
 home.workspace = true
 harfruzz = "0.1.0"
-sleipnir = {path="../../sleipnir"}
+sleipnir = "0.2.4"
 make_test_images = {path="../make_test_images"}
 kurbo.workspace = true
 skrifa.workspace = true
