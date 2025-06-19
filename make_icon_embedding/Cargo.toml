@@ -1,0 +1,14 @@
+[package]
+name = "make_icon_embedding"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+gf-embed = { path = "../gf-embed" }
+protobuf.workspace = true
+home.workspace = true
+embed_anything.workspace = true
+clap.workspace = true
+walkdir.workspace = true
+regex.workspace = true
+itertools = "0.14.0"

@@ -48,7 +48,7 @@ fn output_file(dir: &str, icon: IconIdentifier, ext: &str) -> PathBuf {
         match icon {
             IconIdentifier::GlyphId(gid) => format!("gid{gid}"),
             IconIdentifier::Codepoint(cp) => format!("0x{cp:04x}"),
-            IconIdentifier::Name(name) => format!("name{name}"),
+            IconIdentifier::Name(name) => format!("{name}"),
         }
     ));
     out_file

@@ -115,21 +115,20 @@ async fn main() {
         indices.sort_by(|a, b| similarities[*b].partial_cmp(&similarities[*a]).unwrap());
 
         let top_matches = indices[0..5].to_vec();
-        let top_families = top_matches
+        let top_names = top_matches
             .iter()
             .map(|i| {
-                embed_datas[*i]
-                    .metadata
-                    .as_ref()
-                    .unwrap()
-                    .get("family_name")
-                    .unwrap()
-                    .as_str()
+                let metadata = embed_datas[*i].metadata.as_ref().unwrap();
+                // Really should have used the same id field...
+                metadata
+                    .get("name")
+                    .or_else(|| metadata.get("family_name"))
+                    .unwrap_or_else(|| panic!("Should have some identifier in {metadata:?}"))
             })
             .collect::<Vec<_>>();
 
         println!("Best results for {query}");
-        for (i, e) in top_families.iter().enumerate() {
+        for (i, e) in top_names.iter().enumerate() {
             println!("{i}: {e}");
         }
     }

@@ -54,6 +54,12 @@ $ cargo run -p query_embedding -- "korean serif"
 $ cargo build --release -p make_icon_images && target/release/make_icon_images --icon-font ~/oss/material-design-icons/variablefont/MaterialSymbolsOutlined\[FILL,GRAD,opsz,wght].ttf
 $ ls -1 /tmp/icon_png/*.png | wc -l
 3649
+
+## Make embeddings
+$ cargo build --release -p make_icon_embedding && target/release/make_icon_embedding
+
+# Query embeddings, in this case with an image of an icon that we'd like to identify
+
 ```
 
 ![Material Symbols render sample](namecomment.png)
